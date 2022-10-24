@@ -12,9 +12,10 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
-  full_name String
+  full_name String @unique
   user_image String
   user_bio String
 
   contact Json
+  password String
 }
