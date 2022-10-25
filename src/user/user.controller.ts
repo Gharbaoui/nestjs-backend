@@ -15,10 +15,9 @@ export class UserController {
         return this.userService.createUser(dto);
     }
 
-    @UseGuards(UserGuard)
-    @Patch('update')
-    updateUser(@Body() body)
+    @Get('')
+    getMainUser()
     {
-        return this.userService.updateUser(body);
+        return this.userService.getUserInfo();
     }
 }

@@ -21,7 +21,6 @@ export class UserGuard implements CanActivate{
             
             if (user && String(context.getHandler().name) == "createUser")
                     return false;
-            return true;
             return await argon.verify(user.password, body.password);
         } catch(err) {
             return false;

@@ -18,17 +18,10 @@ export class UserService {
         }
     }
 
-    async updateUser(data: any) {
-        try {
-            const user = await this.prismaService.user.update({
-                where:{
-                    full_name: data.full_name
-                },
-                data
-            });
-            return user;
-        } catch (err) {
-            throw new ForbiddenException(`we could not update the user`);
-        }
+    async getUserInfo()
+    {
+        const user = await this.prismaService.user.findMany();
+        delete user[0].password; // do not ever remove this line
+        return user[0];
     }
 }
