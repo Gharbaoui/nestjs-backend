@@ -14,8 +14,7 @@ model User {
   id Int @id @default(autoincrement())
   full_name String @unique
   user_image String
-  user_bio String
+  user_biography String
 
   contact Json
-  password String
 }

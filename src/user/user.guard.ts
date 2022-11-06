@@ -2,29 +2,26 @@ import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import * as argon from 'argon2';
 import { userInfo } from "os";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class UserGuard implements CanActivate{
-    constructor (private readonly prismaService: PrismaService) {}
+    constructor (
+        private readonly prismaService: PrismaService,
+        private readonly configService: ConfigService
+    ) {}
 
     async canActivate(context: ExecutionContext) {
-        try {
-            // return true; // remove__ this for security
-            const {body} = context.switchToHttp().getRequest();
-            if (!body.full_name || !body.password)
-                return false;
-            const user = await this.prismaService.user.findFirst({
-                where: {
-                    full_name: body.full_name
-                }
-            });
-            
-            if (user && String(context.getHandler().name) == "createUser")
-                    return false;
-            return await argon.verify(user.password, body.password);
-        } catch(err) {
+        const {body} = context.switchToHttp().getRequest();
+        const {password} = body;
+        delete body.password;
+        if (!password){
             return false;
         }
+        return await argon.verify(
+            this.configService.get<string> ("USER_PASSWORD_ACCESS_HASHED"),
+            password
+        );
     }
     
 }

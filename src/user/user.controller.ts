@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
-import { UserDto } from './dto';
+import { UserDto, UserDtoUpdate } from './dto';
 import { UserGuard } from './user.guard';
 import { UserService } from './user.service';
 
@@ -9,10 +9,17 @@ export class UserController {
 
 
     @UseGuards(UserGuard)
-    @Post('create')
+    @Post(`create`)
     createUser(@Body() dto: UserDto) /* do not chage the name becuase it's used in user guard */
     {
         return this.userService.createUser(dto);
+    }
+
+    @UseGuards(UserGuard)
+    @Patch(`update`)
+    updateUser(@Body() dto: UserDtoUpdate)
+    {
+        return this.userService.userUpdate(dto);
     }
 
     @Get('')
@@ -20,4 +27,5 @@ export class UserController {
     {
         return this.userService.getUserInfo();
     }
+
 }

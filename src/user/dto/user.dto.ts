@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 
 
@@ -13,7 +13,7 @@ export class UserDto {
 
     @IsString()
     @IsNotEmpty()
-    user_bio: string;
+    user_biography: string;
 
     @IsArray()
     contact: Array<{
@@ -22,8 +22,30 @@ export class UserDto {
         other: string,
         other_identifier: string,  
     }>;
+}
 
-    @IsNotEmpty()
+export class UserDtoUpdate {
     @IsString()
-    password: string;
+    @IsNotEmpty()
+    @IsOptional()
+    full_name: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @IsOptional()
+    user_image: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @IsOptional()
+    user_biography: string;
+
+    @IsArray()
+    @IsOptional()
+    contact: Array<{
+        contact_media: string,
+        contact_url: string,
+        other: string,
+        other_identifier: string,  
+    }>;
 }
