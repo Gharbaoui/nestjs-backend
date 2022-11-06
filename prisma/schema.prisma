@@ -16,5 +16,5 @@ model User {
   user_image String
   user_biography String
 
-  contact Json
+  contact Json[]
 }

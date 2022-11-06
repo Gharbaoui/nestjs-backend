@@ -1,9 +1,9 @@
 import { Body, ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserDto, UserDtoUpdate } from './dto';
+import { UserAddContactDto, UserDto, UserDtoUpdate } from './dto';
 import * as argon from 'argon2';
 import { ConfigService } from '@nestjs/config';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -43,4 +43,24 @@ export class UserService {
         return new_user;
     }
 
+    async contactadd(data: UserAddContactDto) {
+        const old_user = await this.prismaService.user.findMany();
+        const new_contact = old_user[0].contact as Prisma.JsonArray;
+        new_contact.push({
+            other: data.other,
+            contact_url: data.contact_url,
+            contact_media: data.contact_media,
+            other_identifier: data.other_identifier
+        });
+        
+       const new_user = await this.prismaService.user.update({
+        where: {
+            id: old_user[0].id
+        },
+        data:{
+            contact: new_contact
+        }
+       });
+       return new_user;
+    }
 }

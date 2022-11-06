@@ -49,3 +49,14 @@ export class UserDtoUpdate {
         other_identifier: string,  
     }>;
 }
+
+export class UserAddContactDto {
+    @IsString()
+    other: string;
+    @IsString()
+    contact_url: string;
+    @IsString()
+    contact_media: string;
+    @IsString()
+    other_identifier: string;
+}
