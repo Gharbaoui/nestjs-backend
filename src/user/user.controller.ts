@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { UserAddContactDto, UserDto, UserDtoUpdate } from './dto';
-import { UserGuard } from './user.guard';
+import { UserGuard } from '../guards/user.guard';
 import { UserService } from './user.service';
 
 @Controller('user')
