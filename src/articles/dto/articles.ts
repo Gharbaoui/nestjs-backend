@@ -1,4 +1,4 @@
-import {ArrayNotEmpty, IsDefined, IsNotEmpty, IsPositive, Max, Min } from "class-validator";
+import {ArrayNotEmpty, IsBoolean, IsDefined, IsNotEmpty, IsPositive, IsString, Max, Min } from "class-validator";
 
 export class ArticleStateDto {
     @IsNotEmpty()
@@ -18,6 +18,7 @@ export class ArticleSearchKeywordsDto {
 
 export class ArticleNextPrevDto {
     @IsPositive()
+    @IsDefined()
     id:number;
     @IsDefined()
     @Min(-1)
@@ -27,4 +28,46 @@ export class ArticleNextPrevDto {
     prev: number;
     @IsDefined()
     update_prv: boolean;
+}
+
+export class ArticleTitleDto {
+    @IsPositive()
+    @IsDefined()
+    id:number;
+    @IsDefined()
+    @IsBoolean()
+    add: boolean;
+    @IsDefined()
+    @IsString()
+    title: string;
+}
+
+export class ArticleIdeaDto {
+    @IsPositive()
+    @IsDefined()
+    id:number;
+    @IsDefined()
+    @IsBoolean()
+    add: boolean;
+    @IsDefined()
+    @IsString()
+    idea: string;
+}
+
+interface Preq {
+    req_title: string;
+    req_url: string;
+    is_local_article: boolean;
+}
+
+export class ArticlePreqsDto {
+    @IsPositive()
+    @IsDefined()
+    id:number;
+    @IsDefined()
+    @ArrayNotEmpty()
+    preqs: Array<Preq>;
+    @IsDefined()
+    @IsBoolean()
+    add: boolean;
 }

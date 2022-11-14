@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ArticleNextPrevDto, ArticleSearchKeywordsDto, ArticleStateDto } from './dto';
+import { ArticleIdeaDto, ArticleNextPrevDto, ArticlePreqsDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto } from './dto';
 
 @Injectable()
 export class ArticlesService {
@@ -119,6 +119,91 @@ export class ArticlesService {
         } catch(err) {
             console.log(`failed in articles in row update`);
             return `could not update articles in row`;
+        }
+    }
+    async titleUpdate(dto: ArticleTitleDto)
+    {
+        try {
+            if (!dto.add) {
+                const new_aricle = await this.prismaService.article.update({
+                    where: {id:dto.id},
+                    data: {
+                        title: dto.title
+                    }
+                });
+                return {title: new_aricle.title};
+            } else {
+                const article = await this.prismaService.article.findUnique({where: {id:dto.id}})
+                if (!article)
+                    return `invalid article id`;
+                const new_aricle = await this.prismaService.article.update({
+                    where: {id:dto.id},
+                    data: {
+                        title: article.title + ' ' + dto.title
+                    }
+                });
+                return {title: new_aricle.title};
+            }
+        } catch(err) {
+            console.log(`probably wrong id`);
+            return  `faild to change title`;
+        }
+    }
+
+
+    async ideaUpdate(dto: ArticleIdeaDto)
+    {
+        try {
+            if (!dto.add) {
+                const new_aricle = await this.prismaService.article.update({
+                    where: {id:dto.id},
+                    data: {
+                        idea: dto.idea
+                    }
+                });
+                return {idea: new_aricle.idea};
+            } else {
+                const article = await this.prismaService.article.findUnique({where: {id:dto.id}})
+                if (!article)
+                    return `invalid article id`;
+                const new_aricle = await this.prismaService.article.update({
+                    where: {id:dto.id},
+                    data: {
+                        idea: article.idea + ' ' + dto.idea
+                    }
+                });
+                return {idea: new_aricle.idea};
+            }
+        } catch(err) {
+            console.log(`probably wrong id`);
+            return  `faild to change idea`;
+        }
+    }
+
+    async preqUpdate(dto: ArticlePreqsDto) {
+        try {
+            let new_preqs = [];
+            if (dto.add) {
+                const article = await this.prismaService.article.findUnique({where: {id:dto.id}});
+                if (!article)
+                    return `invalid article id`;
+                new_preqs = article.preqs;
+                dto.preqs.forEach((elem) => {
+                    new_preqs.push(elem as any);
+                })  
+            } else {
+                new_preqs = dto.preqs;
+            }
+            const new_aricle = await this.prismaService.article.update({
+                where: {id:dto.id},
+                data: {
+                    preqs: new_preqs
+                }
+            });
+            return {preqs: new_aricle.preqs};
+        } catch (err) {
+            console.log(`faild to update preqs`);
+            return `maybe invalid id`;
         }
     }
 }
