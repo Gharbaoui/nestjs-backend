@@ -27,7 +27,9 @@ model Article {
   next_prev_article Json // {prv_article_id, next_article_id}
   title String
   idea String
-  preqs Json[] // [{req_name, req_url}]
-  explained Json[] // [{explain_txt:string, explain_img:path, code_snipest: string}]
+  preqs Json[] // [{req_title, req_url}]
+  explained Json[]
+  // [{explain_txt:string, explain_img:{path:string, is_local:boolean}, code_snipest: {source_code: string, language: string}}]
   conclusion String
+  logo String // path to article logo
 }
