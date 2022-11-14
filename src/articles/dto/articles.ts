@@ -71,3 +71,24 @@ export class ArticlePreqsDto {
     @IsBoolean()
     add: boolean;
 }
+
+export class ArticleLogoDto {
+    @IsPositive()
+    @IsDefined()
+    id:number;
+    @IsDefined()
+    @IsString()
+    logo: string;
+}
+
+export class ArticleConclusionDto {
+    @IsPositive()
+    @IsDefined()
+    id:number;
+    @IsDefined()
+    @IsBoolean()
+    add: boolean;
+    @IsDefined()
+    @IsString()
+    conclusion: string;
+}

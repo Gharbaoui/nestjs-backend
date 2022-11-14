@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ArticleIdeaDto, ArticleNextPrevDto, ArticlePreqsDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto } from './dto';
+import { ArticleConclusionDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto } from './dto';
 
 @Injectable()
 export class ArticlesService {
@@ -47,7 +47,6 @@ export class ArticlesService {
             const article = await this.prismaService.article.create({data});
             return article.id;
         } catch(err) {
-            console.log(err);
             console.log(`while trying to insert empty article`);
         }
     }
@@ -204,6 +203,43 @@ export class ArticlesService {
         } catch (err) {
             console.log(`faild to update preqs`);
             return `maybe invalid id`;
+        }
+    }
+
+    async updateLogo(dto: ArticleLogoDto) {
+        try {
+            const article = await this.prismaService.article.update({
+                where: {id:dto.id},
+                data: {
+                    logo: dto.logo
+                }
+            });
+            return {new_logo: article.logo};
+        } catch(err) {
+            console.log(`logo could not be updated`);
+            return `probably wrong id`;
+        }
+    }
+
+    async updateConclusion(dto: ArticleConclusionDto) {
+        try {
+            let new_conclusion: string;
+            if (dto.add) {
+                const article = await this.prismaService.article.findUnique({where: {id:dto.id}});
+                if (!article)
+                    return `wrong id`;
+                new_conclusion = article.conclusion + ' ' + dto.conclusion;
+            } else {
+                new_conclusion = dto.conclusion;
+            }
+            const new_aricle = await this.prismaService.article.update({
+                where: {id:dto.id},
+                data: { conclusion: new_conclusion }
+            });
+            return {conclusion: new_aricle.conclusion};
+        } catch(err) {
+            console.log(`conclusion could not be updated`);
+            return `wrong id`;
         }
     }
 }
