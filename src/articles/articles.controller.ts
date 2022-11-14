@@ -29,4 +29,10 @@ export class ArticlesController {
         return this.ariclesService.searchKeywordsUpdate(dto);
     }
 
+    @UseGuards(UserGuard)
+    @Patch('nextprvarticle')
+    nextPrvArticleUpdate(@Body() dto: ArticleNextPrevDto)
+    {
+        return this.ariclesService.articlesInRow(dto);
+    }
 }
