@@ -1,12 +1,124 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ArticleNextPrevDto, ArticleSearchKeywordsDto, ArticleStateDto } from './dto';
 
 @Injectable()
 export class ArticlesService {
 
     constructor(private readonly prismaService: PrismaService) {}
-    articlesService()
+    data = {
+        search_keywords : ['key-1', 'key-2', '...'],
+        next_prev_article: {prv_article_id:-1, next_article_id:-1},
+        title: 'hashing vs encoding',
+        idea: 'they are different',
+        preqs: [
+            {
+                req_title: 'you need to know c++',
+                req_url: '/path/to/my/article if is_local_article_is_true',
+                is_local_article: true,
+            },
+            {
+                req_title: 'you need to know c++',
+                req_url: 'https://... if is_local_article is false',
+                is_local_article: false,
+            },
+        ],
+        explained: [
+            {
+                explain_txt: "explain part 1",
+                explain_img: {
+                    path: 'https://..jpg',
+                    is_local_article: false
+                },
+                code_snipest: {
+                    source_code: `const int add(int a, int b) {return a + b}`,
+                    language: `cpp`
+                }
+            },
+        ],
+        conclusion: `I hope this was right techniclly`,
+        logo: '/assets/default/logo'
+    }
+    async emptyArticle()
     {
-        return `articles service`;
+        try {
+            const data = this.data;
+            const article = await this.prismaService.article.create({data});
+            return article.id;
+        } catch(err) {
+            console.log(err);
+            console.log(`while trying to insert empty article`);
+        }
+    }
+    
+    async stateUpdate(dto: ArticleStateDto) {
+       try {
+        const new_article = await this.prismaService.article.update({
+            where: {id: dto.id},
+            data: {
+                state: dto.state,
+                release_time: new Date()
+            }
+        });
+        return {id: new_article.id, state: new_article.state, release_time: new_article.release_time};
+       } catch(err) {
+        console.log(`while trying to update state of article`);
+        return `probably wrong article id`
+       } 
+    }
+
+    async searchKeywordsUpdate(dto: ArticleSearchKeywordsDto): Promise<"not valid article id" | "we could not update search keywords" | { search_keywords: string[]; }>
+    {
+        try {
+            const article = await this.prismaService.article.findUnique({where: {id: dto.id}});
+            if (!article)
+                return  `not valid article id`;
+            let new_keywords: string[] = [];
+            if (dto.add_keywords) {
+                new_keywords = article.search_keywords;
+                dto.search_keywords.forEach(element => {
+                    new_keywords.push(element);
+                });
+            } else {
+                new_keywords = dto.search_keywords;
+            }
+            const new_article = await this.prismaService.article.update({
+                where: {
+                    id: dto.id
+                },
+                data: {
+                    search_keywords: new_keywords
+                }
+            });
+            return {
+                search_keywords: new_article.search_keywords
+            }
+        } catch(err) {
+            console.log(`could not update a search keywords`);
+            return  `we could not update search keywords`;
+        }
+    }
+
+    async articlesInRow(dto: ArticleNextPrevDto)
+    {
+        try {
+            const article = await this.prismaService.article.findUnique({where: {id:dto.id}});
+            if (!article)
+                return  `not a valid article id`;
+            const new_article = await this.prismaService.article.update({
+                where: {id: dto.id},
+                data: {
+                    next_prev_article: {
+                        prv_article_id: dto.update_prv ? dto.prev : (article.next_prev_article as Prisma.JsonObject).prv_article_id,
+                        next_article_id: dto.next
+                    }
+                }
+            });
+            return new_article.next_prev_article;
+        } catch(err) {
+            console.log(`failed in articles in row update`);
+            return `could not update articles in row`;
+        }
     }
 }
