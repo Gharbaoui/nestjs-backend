@@ -23,4 +23,10 @@ export class ArticlesController {
         return this.ariclesService.stateUpdate(dto);
     }
 
+    @UseGuards(UserGuard)
+    @Patch('searchkeywords')
+    searchKeywordsUpdate(@Body() dto: ArticleSearchKeywordsDto){
+        return this.ariclesService.searchKeywordsUpdate(dto);
+    }
+
 }
