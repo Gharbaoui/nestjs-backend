@@ -15,4 +15,12 @@ export class ArticlesController {
     {
         return this.ariclesService.emptyArticle();
     }
+
+    @UseGuards(UserGuard)
+    @Patch('state')
+    stateUpdate(@Body() dto: ArticleStateDto)
+    {
+        return this.ariclesService.stateUpdate(dto);
+    }
+
 }
