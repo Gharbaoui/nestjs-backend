@@ -1,6 +1,7 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserGuard } from 'src/guards/user.guard';
 import { ArticlesService } from './articles.service';
+import { ArticleNextPrevDto, ArticleSearchKeywordsDto, ArticleStateDto } from './dto';
 
 @Controller('articles')
 export class ArticlesController {
@@ -8,4 +9,10 @@ export class ArticlesController {
         private readonly ariclesService: ArticlesService
     ){}
 
+    @UseGuards(UserGuard)
+    @Post('createempty')
+    createEmptyArticle()
+    {
+        return this.ariclesService.emptyArticle();
+    }
 }
