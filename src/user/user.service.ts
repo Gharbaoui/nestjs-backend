@@ -27,40 +27,54 @@ export class UserService {
     async getUserInfo()
     {
         const user = await this.prismaService.user.findMany();
+        if (user.length === 0)
+            return `no user found`;
         return user[0];
     }
 
     async userUpdate(data: UserDtoUpdate)
     {
-        const old_user = await this.prismaService.user.findMany();
-        const new_user = await this.prismaService.user.update({
-            where: {
-                id: old_user[0].id
-            },
-            data
-        });
-        delete new_user.id;
-        return new_user;
+        try {
+            const old_user = await this.prismaService.user.findMany();
+            if (old_user.length === 0)
+                return `no user found`;
+            const new_user = await this.prismaService.user.update({
+                where: {
+                    id: old_user[0].id
+                },
+                data
+            });
+            delete new_user.id;
+            return new_user;
+        } catch(err) {
+            return `user could not be updated`;
+        }
     }
 
     async contactadd(data: UserAddContactDto) {
-        const old_user = await this.prismaService.user.findMany();
-        const new_contact = old_user[0].contact as Prisma.JsonArray;
-        new_contact.push({
-            other: data.other,
-            contact_url: data.contact_url,
-            contact_media: data.contact_media,
-            other_identifier: data.other_identifier
-        });
-        
-       const new_user = await this.prismaService.user.update({
-        where: {
-            id: old_user[0].id
-        },
-        data:{
-            contact: new_contact
+        try {
+            const old_user = await this.prismaService.user.findMany();
+            if (old_user.length === 0)
+                return `no user found`;
+            const new_contact = old_user[0].contact as Prisma.JsonArray;
+            new_contact.push({
+                other: data.other,
+                contact_url: data.contact_url,
+                contact_media: data.contact_media,
+                other_identifier: data.other_identifier
+            });
+            
+           const new_user = await this.prismaService.user.update({
+            where: {
+                id: old_user[0].id
+            },
+            data:{
+                contact: new_contact
+            }
+           });
+           return new_user;
+        } catch(err) {
+            return `contact updated failed`;
         }
-       });
-       return new_user;
     }
 }

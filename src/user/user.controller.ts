@@ -8,7 +8,7 @@ export class UserController {
     constructor(private readonly userService: UserService) {}
 
 
-    // @UseGuards(UserGuard)
+    @UseGuards(UserGuard)
     @Post(`create`)
     createUser(@Body() dto: UserDto) /* do not chage the name becuase it's used in user guard */
     {

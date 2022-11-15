@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ArticleConclusionDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto } from './dto';
+import { ArticleConclusionDto, ArticleExplainedDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto } from './dto';
 
 @Injectable()
 export class ArticlesService {
@@ -240,6 +240,44 @@ export class ArticlesService {
         } catch(err) {
             console.log(`conclusion could not be updated`);
             return `wrong id`;
+        }
+    }
+
+    async explainedUpdate(dto: ArticleExplainedDto) {
+        try {
+            const article = await this.prismaService.article.findUnique({where:{id: dto.id}});
+            if (!article)
+                return `invalid article id`;
+            let explained = article.explained;
+            explained.push({
+                explain_txt: dto.explain_txt,
+                explain_img: dto.explain_img,
+                code_snipest: dto.code_snipest
+            });
+            const new_article = await this.prismaService.article.update({
+                where: {id:dto.id},
+                data: {
+                    explained: explained
+                }
+            });
+            return {explained: new_article.explained};
+        } catch(err) {
+            console.log(`explaied update`);
+            return `probably invalid id`;
+        }
+    }
+
+    async getLogo(id: number)
+    {
+        try {
+            const article = await this.prismaService.article.findUnique({
+                where: {id: id},
+                select: {logo:true}
+            });
+            /// stops here
+        } catch(err) {
+            console.log(`get logo faild`);
+            return `probably wrong id`;
         }
     }
 }
