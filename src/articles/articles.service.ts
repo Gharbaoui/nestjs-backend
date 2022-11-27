@@ -249,9 +249,13 @@ export class ArticlesService {
             if (!article)
                 return `invalid article id`;
             let explained = article.explained;
+            
             explained.push({
                 explain_txt: dto.explain_txt,
-                explain_img: dto.explain_img,
+                explain_img: {
+                    path: dto.explain_img.path,
+                    is_local: dto.explain_img.is_local
+                },
                 code_snipest: dto.code_snipest
             });
             const new_article = await this.prismaService.article.update({
@@ -270,14 +274,126 @@ export class ArticlesService {
     async getLogo(id: number)
     {
         try {
-            const article = await this.prismaService.article.findUnique({
+            return await this.prismaService.article.findUnique({
                 where: {id: id},
                 select: {logo:true}
             });
-            /// stops here
         } catch(err) {
             console.log(`get logo faild`);
             return `probably wrong id`;
         }
+    }
+
+    async getState(id:number) {
+        try {
+            return await this.prismaService.article.findUnique({
+                where: {id: id},
+                select: {state:true}
+            });
+        } catch(err) {
+            console.log(`get state faild`);
+            return `probably wrong id`;
+        } 
+    }
+
+
+
+    async getReleaseTime(id:number) {
+        try {
+            return await this.prismaService.article.findUnique({
+                where: {id: id},
+                select: {release_time:true}
+            });
+        } catch(err) {
+            console.log(`get release time faild`);
+            return `probably wrong id`;
+        }  
+    }
+
+    async getSearchKeywords(id:number) {
+        try {
+            return await this.prismaService.article.findUnique({
+                where: {id: id},
+                select: {search_keywords:true}
+            });
+        } catch(err) {
+            console.log(`get search keywords faild`);
+            return `probably wrong id`;
+        }
+    }
+
+    async getNextPrvArticle(id:number) {
+        try {
+            return await this.prismaService.article.findUnique({
+                where: {id: id},
+                select: {next_prev_article:true}
+            });
+        } catch(err) {
+            console.log(`get next prev article faild`);
+            return `probably wrong id`;
+        }
+    }
+
+    async getTitle(id:number) {
+        try {
+            return await this.prismaService.article.findUnique({
+                where: {id: id},
+                select: {title:true}
+            });
+        } catch(err) {
+            console.log(`get title faild`);
+            return `probably wrong id`;
+        }
+    }
+
+    async getIdea(id:number) {
+        try {
+            return await this.prismaService.article.findUnique({
+                where: {id: id},
+                select: {idea:true}
+            });
+        } catch(err) {
+            console.log(`get idea faild`);
+            return `probably wrong id`;
+        }
+    }
+
+    async getPreqs(id:number) {
+        try {
+            return await this.prismaService.article.findUnique({
+                where: {id: id},
+                select: {preqs:true}
+            });
+        } catch(err) {
+            console.log(`get preqs faild`);
+            return `probably wrong id`;
+        }
+    }
+
+    async   getConclusion(id:number) {
+        try {
+            return await this.prismaService.article.findUnique({
+                where: {id: id},
+                select: {conclusion:true}
+            });
+        } catch(err) {
+            console.log(`get conclusion faild`);
+            return `probably wrong id`;
+        }
+    }
+
+    async getExplaind(dto: {id:number, index:number}) {
+        try {
+            const explaied = await this.prismaService.article.findUnique({
+                where: {id: dto.id},
+                select: {explained:true}
+            });
+            if (dto.index >= 0)
+                return explaied[0];
+            return explaied;
+        } catch(err) {
+            console.log(`get conclusion faild`);
+            return `probably wrong id`;
+        }  
     }
 }

@@ -18,9 +18,9 @@ export class UserService {
             if (user.length === 0){
                 return await this.prismaService.user.create({data});
             }
-            return `user is already exist you may want to change!!`;
+            return {failed:true, msg:`user is already exist you may want to change!!`};
         } catch(err) {
-            throw new ForbiddenException(`we could not insert the user`);
+            return {failed: true, msg: `we could not insert the user`};
         }
     }
 
@@ -47,7 +47,7 @@ export class UserService {
             delete new_user.id;
             return new_user;
         } catch(err) {
-            return `user could not be updated`;
+            return {failed: true, msg: `user could not be updated`};
         }
     }
 
@@ -74,7 +74,7 @@ export class UserService {
            });
            return new_user;
         } catch(err) {
-            return `contact updated failed`;
+            return {failed: true, msg: `contact updated failed`};
         }
     }
 }

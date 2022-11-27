@@ -80,4 +80,53 @@ export class ArticlesController {
     {
         return this.articlesService.getLogo(id);
     }
+
+    @Get('state')
+    getState(@Query('id', ParseIntPipe) id:number) {
+        return this.articlesService.getState(id);
+    }
+    // tests here needed
+    @Get('releasetime')
+    getReleaseTime(@Query('id', ParseIntPipe) id:number) {
+        return this.articlesService.getReleaseTime(id);
+    }
+
+    @Get('searchkeywords')
+    getSearchKeywords(@Query('id', ParseIntPipe) id:number) {
+        return this.articlesService.getSearchKeywords(id);
+    }
+
+    
+    @Get('nextprvarticle')
+    getNextPrvArticle(@Query('id', ParseIntPipe) id:number) {
+        return this.articlesService.getNextPrvArticle(id);
+    }
+
+    @Get('title')
+    getTitle(@Query('id', ParseIntPipe) id:number) {
+        return this.articlesService.getTitle(id);
+    }
+
+    @Get('idea')
+    getIdea(@Query('id', ParseIntPipe) id:number) {
+        return this.articlesService.getIdea(id);
+    }
+
+    @Get('preqs')
+    getPreqs(@Query('id', ParseIntPipe) id:number) {
+        return this.articlesService.getPreqs(id);
+    }
+
+    @Get('explained')
+    getExplained(
+    @Query('id', ParseIntPipe) id:number, @Query('index', ParseIntPipe) index: number
+    ) {
+        return this.articlesService.getExplaind({id, index});
+    }
+    
+
+    @Get('conclusion')
+    getConclusion(@Query('id', ParseIntPipe) id:number) {
+        return this.articlesService.getConclusion(id);
+    }
 }

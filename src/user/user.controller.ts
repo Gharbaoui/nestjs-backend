@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserAddContactDto, UserDto, UserDtoUpdate } from './dto';
 import { UserGuard } from '../guards/user.guard';
 import { UserService } from './user.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 export class UserController {
@@ -12,14 +13,16 @@ export class UserController {
     @Post(`create`)
     createUser(@Body() dto: UserDto) /* do not chage the name becuase it's used in user guard */
     {
-        return this.userService.createUser(dto);
+        console.log(dto);
+        // return this.userService.createUser(dto);
     }
 
     @UseGuards(UserGuard)
     @Patch(`update`)
     updateUser(@Body() dto: UserDtoUpdate)
     {
-        return this.userService.userUpdate(dto);
+        console.log(dto);
+        // return this.userService.userUpdate(dto);
     }
 
     @UseGuards(UserGuard)
@@ -34,6 +37,14 @@ export class UserController {
     getMainUser()
     {
         return this.userService.getUserInfo();
+    }
+
+    @UseGuards(UserGuard)
+    @Post('imageupload')
+    @UseInterceptors(FileInterceptor('file'))
+    uploadImage(@UploadedFile() file) {
+        console.log(file);
+        return `reached`;
     }
 
 }

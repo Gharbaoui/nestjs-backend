@@ -16,6 +16,7 @@ export class UserDto {
     user_biography: string;
 
     @IsArray()
+    @IsOptional()
     contact: Array<{
         contact_media: string,
         contact_url: string,
