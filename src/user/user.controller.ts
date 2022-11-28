@@ -13,8 +13,7 @@ export class UserController {
     @Post(`create`)
     createUser(@Body() dto: UserDto) /* do not chage the name becuase it's used in user guard */
     {
-        console.log(dto);
-        // return this.userService.createUser(dto);
+        return this.userService.createUser(dto);
     }
 
     @UseGuards(UserGuard)
