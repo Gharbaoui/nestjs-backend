@@ -36,7 +36,7 @@ export class UserService {
         const user = await this.prismaService.user.findMany();
         if (user.length === 0)
             return `no user found`;
-        user[0].user_image = fs.readFileSync(user[0].user_image, 'base64');
+        user[0].user_image = fs.readFileSync(user[0].user_image, 'utf8');
         return user[0];
     }
 
