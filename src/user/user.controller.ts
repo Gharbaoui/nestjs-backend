@@ -20,8 +20,7 @@ export class UserController {
     @Patch(`update`)
     updateUser(@Body() dto: UserDtoUpdate)
     {
-        console.log(dto);
-        // return this.userService.userUpdate(dto);
+        return this.userService.userUpdate(dto);
     }
 
     @UseGuards(UserGuard)

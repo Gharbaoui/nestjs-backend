@@ -17,7 +17,6 @@ export class UserService {
     {
         let uid = uuid();
         const user_image_path = `./uploads/user/` + uid;
-        console.log(user_image_path);
         try {
             let user = await this.prismaService.user.findMany();
             if (user.length === 0){
@@ -46,6 +45,13 @@ export class UserService {
             const old_user = await this.prismaService.user.findMany();
             if (old_user.length === 0)
                 return `no user found`;
+            if (data.user_image) {
+                fs.unlink(old_user[0].user_image, (err) => {})
+                let uid = uuid();
+                const user_image_path = `./uploads/user/` + uid;
+                fs.writeFileSync(user_image_path, data.user_image);
+                data.user_image = user_image_path;
+            }
             const new_user = await this.prismaService.user.update({
                 where: {
                     id: old_user[0].id
