@@ -37,12 +37,4 @@ export class UserController {
         return this.userService.getUserInfo();
     }
 
-    @UseGuards(UserGuard)
-    @Post('imageupload')
-    @UseInterceptors(FileInterceptor('file'))
-    uploadImage(@UploadedFile() file) {
-        console.log(file);
-        return `reached`;
-    }
-
 }
