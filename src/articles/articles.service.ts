@@ -63,7 +63,7 @@ export class ArticlesService {
         return {id: new_article.id, state: new_article.state, release_time: new_article.release_time};
        } catch(err) {
         console.log(`while trying to update state of article`);
-        return `probably wrong article id`
+        return {failed: true, msg:`invalid article id`};
        } 
     }
 
@@ -134,7 +134,7 @@ export class ArticlesService {
             } else {
                 const article = await this.prismaService.article.findUnique({where: {id:dto.id}})
                 if (!article)
-                    return `invalid article id`;
+                    return {failed: true, msg:`invalid article id`};
                 const new_aricle = await this.prismaService.article.update({
                     where: {id:dto.id},
                     data: {
@@ -145,7 +145,7 @@ export class ArticlesService {
             }
         } catch(err) {
             console.log(`probably wrong id`);
-            return  `faild to change title`;
+            return  {failed: true, msg:`faild to change title`};
         }
     }
 
@@ -164,7 +164,8 @@ export class ArticlesService {
             } else {
                 const article = await this.prismaService.article.findUnique({where: {id:dto.id}})
                 if (!article)
-                    return `invalid article id`;
+                    return {failed: true, msg:`invalid article id`};
+
                 const new_aricle = await this.prismaService.article.update({
                     where: {id:dto.id},
                     data: {
@@ -175,7 +176,7 @@ export class ArticlesService {
             }
         } catch(err) {
             console.log(`probably wrong id`);
-            return  `faild to change idea`;
+            return {failed: true, msg:`invalid article id`};
         }
     }
 
@@ -185,7 +186,8 @@ export class ArticlesService {
             if (dto.add) {
                 const article = await this.prismaService.article.findUnique({where: {id:dto.id}});
                 if (!article)
-                    return `invalid article id`;
+                    return {failed: true, msg:`invalid article id`};
+                
                 new_preqs = article.preqs;
                 dto.preqs.forEach((elem) => {
                     new_preqs.push(elem as any);
@@ -202,7 +204,7 @@ export class ArticlesService {
             return {preqs: new_aricle.preqs};
         } catch (err) {
             console.log(`faild to update preqs`);
-            return `maybe invalid id`;
+            return {failed: true, msg:`invalid article id`};
         }
     }
 
@@ -217,7 +219,7 @@ export class ArticlesService {
             return {new_logo: article.logo};
         } catch(err) {
             console.log(`logo could not be updated`);
-            return `probably wrong id`;
+            return {failed: true, msg:`invalid article id`};
         }
     }
 
@@ -227,7 +229,7 @@ export class ArticlesService {
             if (dto.add) {
                 const article = await this.prismaService.article.findUnique({where: {id:dto.id}});
                 if (!article)
-                    return `wrong id`;
+                return {failed: true, msg:`invalid article id`};
                 new_conclusion = article.conclusion + ' ' + dto.conclusion;
             } else {
                 new_conclusion = dto.conclusion;
@@ -239,7 +241,7 @@ export class ArticlesService {
             return {conclusion: new_aricle.conclusion};
         } catch(err) {
             console.log(`conclusion could not be updated`);
-            return `wrong id`;
+            return {failed: true, msg:`invalid article id`};
         }
     }
 
@@ -247,7 +249,7 @@ export class ArticlesService {
         try {
             const article = await this.prismaService.article.findUnique({where:{id: dto.id}});
             if (!article)
-                return `invalid article id`;
+                return {failed: true, msg:`invalid article id`};
             let explained = article.explained;
             
             explained.push({
@@ -267,7 +269,7 @@ export class ArticlesService {
             return {explained: new_article.explained};
         } catch(err) {
             console.log(`explaied update`);
-            return `probably invalid id`;
+            return {failed: true, msg:`invalid article id`};
         }
     }
 
@@ -280,7 +282,8 @@ export class ArticlesService {
             });
         } catch(err) {
             console.log(`get logo faild`);
-            return `probably wrong id`;
+            return {failed: true, msg:`invalid article id`};
+
         }
     }
 
@@ -292,7 +295,7 @@ export class ArticlesService {
             });
         } catch(err) {
             console.log(`get state faild`);
-            return `probably wrong id`;
+            return {failed: true, msg:`invalid article id`};
         } 
     }
 
