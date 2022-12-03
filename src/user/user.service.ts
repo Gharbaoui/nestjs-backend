@@ -6,22 +6,23 @@ import { ConfigService } from '@nestjs/config';
 import { Prisma, User } from '@prisma/client';
 import * as fs from 'fs';
 import { v4 as uuid } from 'uuid';
+import { FileHandlerService } from 'src/fileHandler/fileHandler.service';
 
 @Injectable()
 export class UserService {
     constructor (
         private readonly prismaService: PrismaService,
-        private readonly configService: ConfigService
+        private readonly configService: ConfigService,
+        private readonly fileHandlerService: FileHandlerService
     ) {}
     async createUser (data: UserDto)
     {
-        let uid = uuid();
-        const user_image_path = `./uploads/user/` + uid;
         try {
             let user = await this.prismaService.user.findMany();
             if (user.length === 0){
-                fs.writeFileSync(user_image_path, data.user_image);
-                data.user_image = user_image_path;
+                // fs.writeFileSync(user_image_path, data.user_image);
+                const upload_path = this.fileHandlerService.uploadUserImage(data.user_image);
+                data.user_image = upload_path;
                 return await this.prismaService.user.create({data});
             }
             return {failed:true, msg:`user is already exist you may want to change!!`};
@@ -35,7 +36,7 @@ export class UserService {
         const user = await this.prismaService.user.findMany();
         if (user.length === 0)
             return `no user found`;
-        user[0].user_image = fs.readFileSync(user[0].user_image, 'utf8');
+        user[0].user_image = this.fileHandlerService.readFile(user[0].user_image);
         return user[0];
     }
 
@@ -47,10 +48,8 @@ export class UserService {
                 return `no user found`;
             if (data.user_image) {
                 fs.unlink(old_user[0].user_image, (err) => {})
-                let uid = uuid();
-                const user_image_path = `./uploads/user/` + uid;
-                fs.writeFileSync(user_image_path, data.user_image);
-                data.user_image = user_image_path;
+                const upload_path = this.fileHandlerService.uploadUserImage(data.user_image);
+                data.user_image = upload_path;
             }
             const new_user = await this.prismaService.user.update({
                 where: {
