@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 @Injectable()
 export class FileHandlerService {
     private user_path:string = './uploads/user/';
-    private articles_path:string = './uploads/articles';
+    private articles_path:string = './uploads/articles/';
     fileupload(path:string, data:string):string {
         path = path + uuid();
         fs.writeFileSync(path, data);
@@ -15,6 +15,10 @@ export class FileHandlerService {
     uploadUserImage(data:string): string {
 
         return this.fileupload(this.user_path, data);
+    }
+
+    uploadLogoArticle(data: string): string {
+        return this.fileupload(this.articles_path, data);
     }
 
     readFile(path:string) {

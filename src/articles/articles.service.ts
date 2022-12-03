@@ -214,10 +214,11 @@ export class ArticlesService {
 
     async updateLogo(dto: ArticleLogoDto) {
         try {
+            const upload_path = this.fileHandlerService.uploadLogoArticle(dto.logo);
             const article = await this.prismaService.article.update({
                 where: {id:dto.id},
                 data: {
-                    logo: dto.logo
+                    logo: upload_path
                 }
             });
             return {new_logo: article.logo};
