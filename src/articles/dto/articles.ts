@@ -105,3 +105,18 @@ export class ArticleExplainedDto {
     @IsDefined()
     code_snipest: {source_code:string, language:string};
 }
+
+export class BasicArticleDto {
+    @IsPositive()
+    @IsDefined()
+    id:number;
+    @IsDefined()
+    @IsString()
+    title: string;
+    @IsDefined()
+    @IsString()
+    idea: string;
+    @IsDefined()
+    @IsString()
+    logo: string;
+}

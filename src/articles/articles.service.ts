@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { FileHandlerService } from 'src/fileHandler/fileHandler.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ArticleConclusionDto, ArticleExplainedDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto } from './dto';
+import { ArticleConclusionDto, ArticleExplainedDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
 
 @Injectable()
 export class ArticlesService {
@@ -276,6 +276,31 @@ export class ArticlesService {
             return {explained: new_article.explained};
         } catch(err) {
             console.log(`explaied update`);
+            return {failed: true, msg:`invalid article id`};
+        }
+    }
+
+    async basicArticleUpdate(dto: BasicArticleDto) {
+        try {
+
+            dto.logo = this.fileHandlerService.uploadLogoArticle(dto.logo);
+            const old_path = await this.prismaService.article.findUnique({where: {id: dto.id}, select: {logo:true}});
+            this.fileHandlerService.removeFile(old_path.logo);
+            const article = await this.prismaService.article.update({
+                where: {id:dto.id},
+                data: {
+                    logo: dto.logo,
+                    idea: dto.idea,
+                    title: dto.title
+                },select: {
+                    logo: true,
+                    title: true,
+                    idea: true
+                }
+            });
+            return article;
+        } catch(err) {
+            console.log(`could not update basic article`);
             return {failed: true, msg:`invalid article id`};
         }
     }

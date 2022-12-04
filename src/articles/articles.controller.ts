@@ -134,4 +134,9 @@ export class ArticlesController {
     getConclusion(@Query('id', ParseIntPipe) id:number) {
         return this.articlesService.getConclusion(id);
     }
+
+    @Get('basicarticle')
+    getBasicArticle() {
+        // i stopped here
+    }
 }
