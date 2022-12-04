@@ -215,6 +215,8 @@ export class ArticlesService {
     async updateLogo(dto: ArticleLogoDto) {
         try {
             const upload_path = this.fileHandlerService.uploadLogoArticle(dto.logo);
+            const old_path = await this.prismaService.article.findUnique({where: {id: dto.id}, select: {logo:true}});
+            this.fileHandlerService.removeFile(old_path.logo);
             const article = await this.prismaService.article.update({
                 where: {id:dto.id},
                 data: {

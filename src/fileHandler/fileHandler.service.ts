@@ -24,4 +24,8 @@ export class FileHandlerService {
     readFile(path:string) {
         return fs.readFileSync(path, 'utf8');
     }
+
+    removeFile(path:string) {
+        fs.unlink(path, (err) => {})
+    }
 }
