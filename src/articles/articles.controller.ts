@@ -135,8 +135,16 @@ export class ArticlesController {
         return this.articlesService.getConclusion(id);
     }
 
-    @Get('basicarticle')
-    getBasicArticle() {
+    @Get('basicarticles')
+    getBasicArticle(
+        @Query('startIndex', ParseIntPipe) startIndex:number,
+        @Query('endIndex', ParseIntPipe) endIndex:number
+    ) {
         // i stopped here
+        return this.articlesService.getArticleRange(startIndex, endIndex);
+    }
+    @Get('initbasicarticle')
+    getInitBasicArticle() {
+        return this.articlesService.getInitBasicArticle();
     }
 }

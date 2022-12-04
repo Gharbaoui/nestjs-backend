@@ -431,4 +431,28 @@ export class ArticlesService {
             return `probably wrong id`;
         }  
     }
+
+    async getInitBasicArticle() {
+        return this.prismaService.article.count();
+    }
+
+    async getArticleRange(startIndex:number, endIndex:number) {
+        if (startIndex < 0 || endIndex < 0)
+            return {failed: true, msg: `wrong index`};
+        const articles = await this.prismaService.article.findMany({
+            take: endIndex - startIndex + 1,
+            select: {
+                id: true,
+                title: true,
+                idea: true,
+                logo: true,
+                release_time: true,
+            },
+            skip: startIndex
+        });
+        for (let i = 0; i < articles.length; ++i) {
+            articles[i].logo = this.fileHandlerService.readFile(articles[i].logo);
+        }
+        return articles;
+    }
 }
