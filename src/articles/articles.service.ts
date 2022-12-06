@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { FileHandlerService } from 'src/fileHandler/fileHandler.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ArticleConclusionDto, ArticleExplainedDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
+import { ArticleConclusionDto, ArticleExplainedDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsAddDto, ArticlePreqsRemoveDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
 
 @Injectable()
 export class ArticlesService {
@@ -211,6 +211,31 @@ export class ArticlesService {
             console.log(`faild to update preqs`);
             return {failed: true, msg:`invalid article id`};
         }
+    }
+
+    async preqAdd(dto: ArticlePreqsAddDto) {
+        try {
+            const old = await this.prismaService.article.findUnique({where :{id: dto.id}});
+            if (!old)
+                return {failed: true, msg: `could not find article with id ${dto.id}`};
+            let old_preqs = old.preqs;
+            old_preqs.push({
+                req_title: dto.preqs.req_title,
+                req_url: dto.preqs.req_url,
+                is_local_article: dto.preqs.is_local_article
+            });
+            const articl_preqs = await this.prismaService.article.update({
+                where: {id: dto.id},
+                select: {preqs:true},
+                data: {
+                    preqs: old_preqs
+                }
+            });
+            return articl_preqs;
+        } catch (err) {
+            console.log(`faild to add preqs`);
+            return {failed: true, msg:`invalid article id`};
+        } 
     }
 
     async updateLogo(dto: ArticleLogoDto) {
