@@ -108,20 +108,20 @@ export class ArticlesService {
         try {
             const article = await this.prismaService.article.findUnique({where: {id:dto.id}});
             if (!article)
-                return  `not a valid article id`;
+                return  {failed: true, msg:`not a valid article id`};
             const new_article = await this.prismaService.article.update({
                 where: {id: dto.id},
                 data: {
                     next_prev_article: {
                         prv_article_id: dto.update_prv ? dto.prev : (article.next_prev_article as Prisma.JsonObject).prv_article_id,
-                        next_article_id: dto.next
+                        next_article_id: dto.update_next ? dto.next : (article.next_prev_article as Prisma.JsonObject).next_article_id
                     }
                 }
             });
             return new_article.next_prev_article;
         } catch(err) {
             console.log(`failed in articles in row update`);
-            return `could not update articles in row`;
+            return {failed: true, msg: `could not update articles in row`};
         }
     }
     async titleUpdate(dto: ArticleTitleDto)

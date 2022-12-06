@@ -27,7 +27,11 @@ export class ArticleNextPrevDto {
     @Min(-1)
     prev: number;
     @IsDefined()
+    @IsBoolean()
     update_prv: boolean;
+    @IsDefined()
+    @IsBoolean()
+    update_next: boolean;
 }
 
 export class ArticleTitleDto {
