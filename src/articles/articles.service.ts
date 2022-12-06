@@ -441,6 +441,9 @@ export class ArticlesService {
             return {failed: true, msg: `wrong index`};
         const articles = await this.prismaService.article.findMany({
             take: endIndex - startIndex + 1,
+            where: {
+                state: true
+            },
             select: {
                 id: true,
                 title: true,
@@ -454,5 +457,22 @@ export class ArticlesService {
             articles[i].logo = this.fileHandlerService.readFile(articles[i].logo);
         }
         return articles;
+    }
+
+    async getPendingArticles() {
+        try {
+            const arts = await this.prismaService.article.findMany({
+                where: {
+                    state: false
+                },select: {
+                    title:true,
+                    id: true,
+                }
+            });
+            return arts;
+        } catch(err) {
+            console.log(`get pendding error`);
+            return {failed: true, msg: `could not get pending list of articles`};
+        }
     }
 }

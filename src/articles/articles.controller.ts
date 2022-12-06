@@ -147,4 +147,9 @@ export class ArticlesController {
     getInitBasicArticle() {
         return this.articlesService.getInitBasicArticle();
     }
+    @UseGuards(UserGuard)
+    @Get('pendingarticles')
+    getPendingArticles() {
+        return this.articlesService.getPendingArticles();
+    }
 }
