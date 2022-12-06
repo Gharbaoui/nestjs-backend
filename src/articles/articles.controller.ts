@@ -55,6 +55,11 @@ export class ArticlesController {
         return this.articlesService.preqUpdate(dto);
     }
 
+    @UseGuards(UserGuard)
+    @Patch('preqremove')
+    preqRemove(@Body() dto: ArticlePreqsRemoveDto) {
+        return this.articlesService.preqRemove(dto);
+    }
 
     @UseGuards(UserGuard)
     @Patch('preqadd')

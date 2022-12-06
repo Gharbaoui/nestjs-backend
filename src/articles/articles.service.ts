@@ -238,6 +238,33 @@ export class ArticlesService {
         } 
     }
 
+    async preqRemove(dto: ArticlePreqsRemoveDto) {
+        try {
+            const old = await this.prismaService.article.findUnique({where :{id: dto.id}});
+            if (!old)
+                return {failed: true, msg: `could not find article with id ${dto.id}`};
+            let old_preqs = old.preqs;
+            if (dto.index < old_preqs.length && dto.index >= 0) {
+                old_preqs.splice(dto.index, 1);
+            } else {
+                return {failed: true, msg: `out of range index`};
+            }
+            const articl_preqs = await this.prismaService.article.update({
+                where: {id: dto.id},
+                select: {preqs:true},
+                data: {
+                    preqs: old_preqs
+                }
+            });
+            return articl_preqs;
+        } catch (err) {
+            console.log(`faild to remove preqs`);
+            return {failed: true, msg:`invalid article id`};
+        }
+    }
+
+ 
+
     async updateLogo(dto: ArticleLogoDto) {
         try {
             const upload_path = this.fileHandlerService.uploadLogoArticle(dto.logo);
