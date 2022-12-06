@@ -60,16 +60,33 @@ interface Preq {
     is_local_article: boolean;
 }
 
-export class ArticlePreqsDto {
+export class ArticlePreqsUpdateDto {
     @IsPositive()
     @IsDefined()
     id:number;
     @IsDefined()
-    @ArrayNotEmpty()
-    preqs: Array<Preq>;
+    preqs: Preq;
     @IsDefined()
-    @IsBoolean()
-    add: boolean;
+    index:number;
+}
+
+
+export class ArticlePreqsAddDto {
+    @IsPositive()
+    @IsDefined()
+    id:number;
+    @IsDefined()
+    preqs: Preq;
+}
+
+
+export class ArticlePreqsRemoveDto {
+    @IsPositive()
+    @IsDefined()
+    id:number;
+    @IsPositive()
+    @IsDefined()
+    index:number;
 }
 
 export class ArticleLogoDto {

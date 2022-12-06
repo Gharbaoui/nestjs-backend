@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { FileHandlerService } from 'src/fileHandler/fileHandler.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ArticleConclusionDto, ArticleExplainedDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
+import { ArticleConclusionDto, ArticleExplainedDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
 
 @Injectable()
 export class ArticlesService {
@@ -184,28 +184,29 @@ export class ArticlesService {
         }
     }
 
-    async preqUpdate(dto: ArticlePreqsDto) {
+    async preqUpdate(dto: ArticlePreqsUpdateDto) {
         try {
-            let new_preqs = [];
-            if (dto.add) {
-                const article = await this.prismaService.article.findUnique({where: {id:dto.id}});
-                if (!article)
-                    return {failed: true, msg:`invalid article id`};
-                
-                new_preqs = article.preqs;
-                dto.preqs.forEach((elem) => {
-                    new_preqs.push(elem as any);
-                })  
+            const old = await this.prismaService.article.findUnique({where :{id: dto.id}});
+            if (!old)
+                return {failed: true, msg: `could not find article with id ${dto.id}`};
+            let old_preqs = old.preqs;
+            if (dto.index < old_preqs.length && dto.index >= 0) {
+                old_preqs[dto.index] = {
+                    req_title: dto.preqs.req_title,
+                    req_url: dto.preqs.req_url,
+                    is_local_article: dto.preqs.is_local_article
+                };
             } else {
-                new_preqs = dto.preqs;
+                return {failed: true, msg: `out of range index`};
             }
-            const new_aricle = await this.prismaService.article.update({
-                where: {id:dto.id},
+            const articl_preqs = await this.prismaService.article.update({
+                where: {id: dto.id},
+                select: {preqs:true},
                 data: {
-                    preqs: new_preqs
+                    preqs: old_preqs
                 }
             });
-            return {preqs: new_aricle.preqs};
+            return articl_preqs;
         } catch (err) {
             console.log(`faild to update preqs`);
             return {failed: true, msg:`invalid article id`};
