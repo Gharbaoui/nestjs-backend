@@ -84,7 +84,6 @@ export class ArticlePreqsRemoveDto {
     @IsPositive()
     @IsDefined()
     id:number;
-    @IsPositive()
     @IsDefined()
     index:number;
 }
