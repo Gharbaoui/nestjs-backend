@@ -113,7 +113,7 @@ export class ArticleConclusionDto {
     conclusion: string;
 }
 
-export class ArticleExplainedDto {
+export class ArticleExplainedAddDto {
     @IsPositive()
     @IsDefined()
     id:number;

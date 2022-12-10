@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserGuard } from 'src/guards/user.guard';
 import { ArticlesService } from './articles.service';
-import { ArticleConclusionDto, ArticleExplainedDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsAddDto, ArticlePreqsRemoveDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
+import { ArticleConclusionDto, ArticleExplainedAddDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsAddDto, ArticlePreqsRemoveDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
 
 @Controller('articles')
 export class ArticlesController {
@@ -80,9 +80,9 @@ export class ArticlesController {
     }
 
     @UseGuards(UserGuard)
-    @Patch('explainedupdate')
-    explainedUpdate(@Body() dto: ArticleExplainedDto) {
-        return this.articlesService.explainedUpdate(dto);
+    @Patch('explainedadd')
+    explainedUpdate(@Body() dto: ArticleExplainedAddDto) {
+        return this.articlesService.explainedAdd(dto);
     }
 
     @UseGuards(UserGuard)

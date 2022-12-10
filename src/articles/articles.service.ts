@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { FileHandlerService } from 'src/fileHandler/fileHandler.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ArticleConclusionDto, ArticleExplainedDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsAddDto, ArticlePreqsRemoveDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
+import { ArticleConclusionDto, ArticleExplainedAddDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsAddDto, ArticlePreqsRemoveDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
 
 @Injectable()
 export class ArticlesService {
@@ -305,7 +305,7 @@ export class ArticlesService {
         }
     }
 
-    async explainedUpdate(dto: ArticleExplainedDto) {
+    async explainedAdd(dto: ArticleExplainedAddDto) {
         try {
             const article = await this.prismaService.article.findUnique({where:{id: dto.id}});
             if (!article)
