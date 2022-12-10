@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { FileHandlerService } from 'src/fileHandler/fileHandler.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ArticleConclusionDto, ArticleExplainedAddDto, ArticleExplainedUpdateDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsAddDto, ArticlePreqsRemoveDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
+import { ArticleConclusionDto, ArticleExplainedAddDto, ArticleExplainedRemoveDto, ArticleExplainedUpdateDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsAddDto, ArticlePreqsRemoveDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
 
 @Injectable()
 export class ArticlesService {
@@ -328,7 +328,7 @@ export class ArticlesService {
             });
             return {explained: new_article.explained};
         } catch(err) {
-            console.log(`explaied update`);
+            console.log(`explaied add`);
             return {failed: true, msg:`invalid article id`};
         }
     }
@@ -361,9 +361,25 @@ export class ArticlesService {
         }
     }
 
-    // async explainedUpdate(dto: ArticleExplainedUpdateDto) {
-        
-    // }
+    async explainedRemove(dto: ArticleExplainedRemoveDto) {
+        try {
+            const article = await this.prismaService.article.findUnique({where:{id: dto.id}});
+            if (!article)
+                return {failed: true, msg:`invalid article id`};
+            let explained = article.explained;
+            explained.splice(dto.index, 1);
+            const new_article = await this.prismaService.article.update({
+                where: {id:dto.id},
+                data: {
+                    explained: explained
+                }
+            });
+            return {explained: new_article.explained};
+        } catch(err) {
+            console.log(`explaied remove`);
+            return {failed: true, msg:`invalid article id`};
+        }
+    }
 
     async basicArticleUpdate(dto: BasicArticleDto) {
         try {

@@ -143,6 +143,15 @@ export class ArticleExplainedUpdateDto {
 }
 
 
+export class ArticleExplainedRemoveDto {
+    @IsPositive()
+    @IsDefined()
+    id:number;
+    @IsDefined()
+    @IsNumber()
+    index:number;
+}
+
 
 export class BasicArticleDto {
     @IsPositive()
