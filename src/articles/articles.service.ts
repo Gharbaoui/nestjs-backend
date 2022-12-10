@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { FileHandlerService } from 'src/fileHandler/fileHandler.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ArticleConclusionDto, ArticleExplainedAddDto, ArticleExplainedRemoveDto, ArticleExplainedUpdateDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsAddDto, ArticlePreqsRemoveDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
+import { ArticleConclusionDto, ArticleExplainedAddDto, ArticleExplainedCodeDto, ArticleExplainedImgDto, ArticleExplainedRemoveDto, ArticleExplainedTxtDto, ArticleExplainedUpdateDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsAddDto, ArticlePreqsRemoveDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
 
 @Injectable()
 export class ArticlesService {
@@ -33,7 +33,7 @@ export class ArticlesService {
                 explain_txt: "explain part 1",
                 explain_img: {
                     path: 'https://..jpg',
-                    is_local_article: false
+                    is_local: false
                 },
                 code_snipest: {
                     source_code: `const int add(int a, int b) {return a + b}`,
@@ -377,6 +377,81 @@ export class ArticlesService {
             return {explained: new_article.explained};
         } catch(err) {
             console.log(`explaied remove`);
+            return {failed: true, msg:`invalid article id`};
+        }
+    }
+
+    async explainedTxt(dto: ArticleExplainedTxtDto) {
+        try {
+            const article = await this.prismaService.article.findUnique({where:{id: dto.id}});
+            if (!article)
+                return {failed: true, msg:`invalid article id`};
+            let explained = article.explained;
+            
+            (explained[dto.index] as Prisma.JsonObject).explain_txt = dto.explain_txt;
+
+            const new_article = await this.prismaService.article.update({
+                where: {id:dto.id},
+                data: {
+                    explained: explained
+                },
+                select: {
+                    explained:true
+                }
+            });
+            return {explained: new_article};
+        } catch(err) {
+            console.log(`explained txt`);
+            return {failed: true, msg:`invalid article id`};
+        }
+    }
+
+    async explainedImg(dto: ArticleExplainedImgDto) {
+        try {
+            const article = await this.prismaService.article.findUnique({where:{id: dto.id}});
+            if (!article)
+                return {failed: true, msg:`invalid article id`};
+            let explained = article.explained;
+            
+            (explained[dto.index] as Prisma.JsonObject).explain_img = dto.explain_img;
+
+            const new_article = await this.prismaService.article.update({
+                where: {id:dto.id},
+                data: {
+                    explained: explained
+                },
+                select: {
+                    explained:true
+                }
+            });
+            return {explained: new_article};
+        } catch(err) {
+            console.log(`explained image`);
+            return {failed: true, msg:`invalid article id`};
+        }
+    }
+
+    async explainedcode(dto: ArticleExplainedCodeDto) {
+        try {
+            const article = await this.prismaService.article.findUnique({where:{id: dto.id}});
+            if (!article)
+                return {failed: true, msg:`invalid article id`};
+            let explained = article.explained;
+            
+            (explained[dto.index] as Prisma.JsonObject).code_snipest = dto.code_snipest;
+
+            const new_article = await this.prismaService.article.update({
+                where: {id:dto.id},
+                data: {
+                    explained: explained
+                },
+                select: {
+                    explained:true
+                }
+            });
+            return {explained: new_article};
+        } catch(err) {
+            console.log(`explained code`);
             return {failed: true, msg:`invalid article id`};
         }
     }

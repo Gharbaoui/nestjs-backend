@@ -152,7 +152,40 @@ export class ArticleExplainedRemoveDto {
     index:number;
 }
 
+export class ArticleExplainedTxtDto {
+    @IsPositive()
+    @IsDefined()
+    id:number;
+    @IsDefined()
+    @IsNumber()
+    index:number;
+    @IsDefined()
+    @IsString()
+    explain_txt:string;
+}
 
+export class ArticleExplainedImgDto {
+    @IsPositive()
+    @IsDefined()
+    id:number;
+    @IsDefined()
+    @IsNumber()
+    index:number;
+    @IsDefined()
+    explain_img: {path:string, is_local:string};   
+}
+
+
+export class ArticleExplainedCodeDto {
+    @IsPositive()
+    @IsDefined()
+    id:number;
+    @IsDefined()
+    @IsNumber()
+    index:number;
+    @IsDefined()
+    code_snipest: {source_code:string, language:string}; 
+}
 export class BasicArticleDto {
     @IsPositive()
     @IsDefined()

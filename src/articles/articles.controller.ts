@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserGuard } from 'src/guards/user.guard';
 import { ArticlesService } from './articles.service';
-import { ArticleConclusionDto, ArticleExplainedAddDto, ArticleExplainedRemoveDto, ArticleExplainedUpdateDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsAddDto, ArticlePreqsRemoveDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
+import { ArticleConclusionDto, ArticleExplainedAddDto, ArticleExplainedCodeDto, ArticleExplainedImgDto, ArticleExplainedRemoveDto, ArticleExplainedTxtDto, ArticleExplainedUpdateDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsAddDto, ArticlePreqsRemoveDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
 
 @Controller('articles')
 export class ArticlesController {
@@ -95,6 +95,24 @@ export class ArticlesController {
     @Patch('explainedremove')
     explainedRemove(@Body() dto: ArticleExplainedRemoveDto) {
         return this.articlesService.explainedRemove(dto);
+    }
+
+    @UseGuards(UserGuard)
+    @Patch('explainedtxt')
+    explainedTxt(@Body() dto: ArticleExplainedTxtDto) {
+        return this.articlesService.explainedTxt(dto);
+    }
+
+    @UseGuards(UserGuard)
+    @Patch('explainedcode')
+    explainedCode(@Body() dto: ArticleExplainedCodeDto) {
+        return this.articlesService.explainedcode(dto);
+    }
+
+    @UseGuards(UserGuard)
+    @Patch('explainedimg')
+    explainedImg(@Body() dto: ArticleExplainedImgDto) {
+        return this.articlesService.explainedImg(dto);
     }
 
     @UseGuards(UserGuard)
