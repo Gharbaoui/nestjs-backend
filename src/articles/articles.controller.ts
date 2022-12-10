@@ -18,9 +18,9 @@ export class ArticlesController {
 
     @UseGuards(UserGuard)
     @Patch('state')
-    stateUpdate(@Body() dto: ArticleStateDto)
+    stateToggel(@Body() dto: ArticleStateDto)
     {
-        return this.articlesService.stateUpdate(dto);
+        return this.articlesService.stateToggel(dto);
     }
 
     @UseGuards(UserGuard)

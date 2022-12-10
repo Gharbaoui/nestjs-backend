@@ -1,8 +1,6 @@
 import {ArrayNotEmpty, IsBoolean, IsDefined, IsNotEmpty, IsNumber, IsPositive, IsString, Min } from "class-validator";
 
 export class ArticleStateDto {
-    @IsNotEmpty()
-    state: boolean;
     @IsPositive()
     id: number;
 }

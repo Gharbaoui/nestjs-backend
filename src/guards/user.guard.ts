@@ -15,7 +15,12 @@ export class UserGuard implements CanActivate{
         const {body} = context.switchToHttp().getRequest();
         const {password} = body;
         delete body.password;
-        body.id = +body.id
+        if (body.id) {
+            body.id = +body.id
+        }
+        if(body.index) {
+            body.index = +body.index;
+        }
         if (!password){
             return false;
         }

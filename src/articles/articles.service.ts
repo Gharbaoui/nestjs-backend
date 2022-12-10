@@ -55,12 +55,16 @@ export class ArticlesService {
         }
     }
     
-    async stateUpdate(dto: ArticleStateDto) {
+    async stateToggel(dto: ArticleStateDto) {
        try {
+        const article = await this.prismaService.article.findUnique({where: {id: dto.id}});
+        if (!article)
+            return  {failed: true, msg: `not valid article id`};
+        
         const new_article = await this.prismaService.article.update({
             where: {id: dto.id},
             data: {
-                state: dto.state,
+                state: !article.state,
                 release_time: new Date()
             }
         });
@@ -339,15 +343,18 @@ export class ArticlesService {
             if (!article)
                 return {failed: true, msg:`invalid article id`};
             let explained = article.explained;
-            
-            explained[dto.index] = {
-                explain_txt: dto.explain_txt,
-                explain_img: {
-                    path: dto.explain_img.path,
-                    is_local: dto.explain_img.is_local
-                },
-                code_snipest: dto.code_snipest
-            };
+            if (dto.index < explained.length && dto.index >= 0) {
+                explained[dto.index] = {
+                    explain_txt: dto.explain_txt,
+                    explain_img: {
+                        path: dto.explain_img.path,
+                        is_local: dto.explain_img.is_local
+                    },
+                    code_snipest: dto.code_snipest
+                };
+            } else {
+                return {failed: true, msg: `invalid index`};
+            }
             const new_article = await this.prismaService.article.update({
                 where: {id:dto.id},
                 data: {
