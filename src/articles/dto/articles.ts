@@ -1,4 +1,4 @@
-import {ArrayNotEmpty, IsBoolean, IsDefined, IsNotEmpty, IsPositive, IsString, Min } from "class-validator";
+import {ArrayNotEmpty, IsBoolean, IsDefined, IsNotEmpty, IsNumber, IsPositive, IsString, Min } from "class-validator";
 
 export class ArticleStateDto {
     @IsNotEmpty()
@@ -125,6 +125,24 @@ export class ArticleExplainedAddDto {
     @IsDefined()
     code_snipest: {source_code:string, language:string};
 }
+
+export class ArticleExplainedUpdateDto {
+    @IsPositive()
+    @IsDefined()
+    id:number;
+    @IsDefined()
+    @IsString()
+    explain_txt: string;
+    @IsDefined()
+    explain_img: {path:string, is_local:string};
+    @IsDefined()
+    code_snipest: {source_code:string, language:string};
+    @IsDefined()
+    @IsNumber()
+    index:number;
+}
+
+
 
 export class BasicArticleDto {
     @IsPositive()

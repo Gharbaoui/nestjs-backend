@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { FileHandlerService } from 'src/fileHandler/fileHandler.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ArticleConclusionDto, ArticleExplainedAddDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsAddDto, ArticlePreqsRemoveDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
+import { ArticleConclusionDto, ArticleExplainedAddDto, ArticleExplainedUpdateDto, ArticleIdeaDto, ArticleLogoDto, ArticleNextPrevDto, ArticlePreqsAddDto, ArticlePreqsRemoveDto, ArticlePreqsUpdateDto, ArticleSearchKeywordsDto, ArticleStateDto, ArticleTitleDto, BasicArticleDto } from './dto';
 
 @Injectable()
 export class ArticlesService {
@@ -332,6 +332,38 @@ export class ArticlesService {
             return {failed: true, msg:`invalid article id`};
         }
     }
+
+    async explainedUpdate(dto: ArticleExplainedUpdateDto) {
+        try {
+            const article = await this.prismaService.article.findUnique({where:{id: dto.id}});
+            if (!article)
+                return {failed: true, msg:`invalid article id`};
+            let explained = article.explained;
+            
+            explained[dto.index] = {
+                explain_txt: dto.explain_txt,
+                explain_img: {
+                    path: dto.explain_img.path,
+                    is_local: dto.explain_img.is_local
+                },
+                code_snipest: dto.code_snipest
+            };
+            const new_article = await this.prismaService.article.update({
+                where: {id:dto.id},
+                data: {
+                    explained: explained
+                }
+            });
+            return {explained: new_article.explained};
+        } catch(err) {
+            console.log(`explaied update`);
+            return {failed: true, msg:`invalid article id`};
+        }
+    }
+
+    // async explainedUpdate(dto: ArticleExplainedUpdateDto) {
+        
+    // }
 
     async basicArticleUpdate(dto: BasicArticleDto) {
         try {
