@@ -21,6 +21,10 @@ export class FileHandlerService {
         return this.fileupload(this.articles_path, data);
     }
 
+    uploadExplainedArticle(data:string): string {
+        return this.fileupload(this.articles_path, data);
+    }
+
     readFile(path:string) {
         return fs.readFileSync(path, 'utf8');
     }

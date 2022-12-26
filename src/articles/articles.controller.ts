@@ -194,4 +194,9 @@ export class ArticlesController {
     getPendingArticles() {
         return this.articlesService.getPendingArticles();
     }
+
+    @Get('articleat')
+    getArticle(@Query('article_id', ParseIntPipe) article_id:number) {
+        return this.articlesService.getArticleAt(article_id);
+    }
 }

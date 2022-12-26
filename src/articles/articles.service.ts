@@ -17,32 +17,11 @@ export class ArticlesService {
         title: 'hashing vs encoding',
         idea: 'they are different',
         preqs: [
-            {
-                req_title: 'you need to know c++',
-                req_url: '/path/to/my/article if is_local_article_is_true',
-                is_local_article: true,
-            },
-            {
-                req_title: 'you need to know c++',
-                req_url: 'https://... if is_local_article is false',
-                is_local_article: false,
-            },
         ],
         explained: [
-            {
-                explain_txt: "explain part 1",
-                explain_img: {
-                    path: 'https://..jpg',
-                    is_local: false
-                },
-                code_snipest: {
-                    source_code: `const int add(int a, int b) {return a + b}`,
-                    language: `cpp`
-                }
-            },
         ],
         conclusion: `I hope this was right techniclly`,
-        logo: '/assets/default/logo'
+        logo: ''
     }
     async emptyArticle()
     {
@@ -314,6 +293,10 @@ export class ArticlesService {
             const article = await this.prismaService.article.findUnique({where:{id: dto.id}});
             if (!article)
                 return {failed: true, msg:`invalid article id`};
+            if (dto.explain_img.is_local) {
+                dto.explain_img.path = this.fileHandlerService.uploadExplainedArticle(dto.explain_img.path);
+            }
+            
             let explained = article.explained;
             
             explained.push({
@@ -342,8 +325,15 @@ export class ArticlesService {
             const article = await this.prismaService.article.findUnique({where:{id: dto.id}});
             if (!article)
                 return {failed: true, msg:`invalid article id`};
+ 
             let explained = article.explained;
             if (dto.index < explained.length && dto.index >= 0) {
+                if (dto.explain_img.is_local) {
+                    this.fileHandlerService.removeFile(
+                        ((explained[dto.index] as Prisma.JsonObject).explain_img as any).path
+                    );
+                    dto.explain_img.path = this.fileHandlerService.uploadExplainedArticle(dto.explain_img.path);
+                }
                 explained[dto.index] = {
                     explain_txt: dto.explain_txt,
                     explain_img: {
@@ -374,7 +364,14 @@ export class ArticlesService {
             if (!article)
                 return {failed: true, msg:`invalid article id`};
             let explained = article.explained;
-            explained.splice(dto.index, 1);
+            if (dto.index < explained.length && dto.index >= 0) {
+                this.fileHandlerService.removeFile(
+                    ((article.explained[dto.index] as Prisma.JsonObject).explain_img as any).path
+                );
+                explained.splice(dto.index, 1);
+            } else {
+                return {failed: true, msg: `invalid index`};
+            }
             const new_article = await this.prismaService.article.update({
                 where: {id:dto.id},
                 data: {
@@ -394,8 +391,11 @@ export class ArticlesService {
             if (!article)
                 return {failed: true, msg:`invalid article id`};
             let explained = article.explained;
-            
-            (explained[dto.index] as Prisma.JsonObject).explain_txt = dto.explain_txt;
+            if (dto.index < explained.length && dto.index >= 0) {
+                (explained[dto.index] as Prisma.JsonObject).explain_txt = dto.explain_txt;
+            } else {
+                return {failed: true, msg:`incalid article id`};
+            }
 
             const new_article = await this.prismaService.article.update({
                 where: {id:dto.id},
@@ -419,8 +419,18 @@ export class ArticlesService {
             if (!article)
                 return {failed: true, msg:`invalid article id`};
             let explained = article.explained;
-            
-            (explained[dto.index] as Prisma.JsonObject).explain_img = dto.explain_img;
+
+            if (dto.index < explained.length && dto.index >= 0) {
+                if (dto.explain_img.is_local) {
+                    this.fileHandlerService.removeFile(
+                        ((explained[dto.index] as Prisma.JsonObject).explain_img as any).path
+                    );
+                    dto.explain_img.path = this.fileHandlerService.uploadExplainedArticle(dto.explain_img.path);
+                }
+                (explained[dto.index] as Prisma.JsonObject).explain_img = dto.explain_img;
+            } else {
+                return {failed:true, msg: `invalid article id`};
+            }
 
             const new_article = await this.prismaService.article.update({
                 where: {id:dto.id},
@@ -656,6 +666,36 @@ export class ArticlesService {
         } catch(err) {
             console.log(`get pendding error`);
             return {failed: true, msg: `could not get pending list of articles`};
+        }
+    }
+
+    async getArticleAt(article_id: number) {
+        try {
+            const article = await this.prismaService.article.findUnique({
+                where: {id: article_id},
+                select: {
+                    title:true,
+                    idea: true,
+                    preqs: true,
+                    next_prev_article: true,
+                    explained: true,
+                    conclusion:true
+                }
+            });
+            if (!article) {
+                return {failed:true, msg: `invalid article id`};
+            }
+            for (let i = 0; i < article.explained.length; ++i) {
+                if (((article.explained[i] as Prisma.JsonObject).explain_img as any).is_local) {
+                    ((article.explained[i] as Prisma.JsonObject).explain_img as any).path = this.fileHandlerService.readFile(
+                        ((article.explained[i] as Prisma.JsonObject).explain_img as any).path
+                    );
+                }
+            }
+            return article;
+        } catch(e) {
+            console.log(e);
+            return {failed:true, msg: `invalid article id`};
         }
     }
 }
