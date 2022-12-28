@@ -660,8 +660,12 @@ export class ArticlesService {
                 },select: {
                     title:true,
                     id: true,
+                    logo: true,
                 }
             });
+            for (let i = 0; i < arts.length; ++i) {
+                arts[i].logo = this.fileHandlerService.readFile(arts[i].logo);
+            }
             return arts;
         } catch(err) {
             console.log(`get pendding error`);
@@ -675,6 +679,7 @@ export class ArticlesService {
                 where: {id: article_id},
                 select: {
                     title:true,
+                    state:true,
                     idea: true,
                     preqs: true,
                     next_prev_article: true,
@@ -684,6 +689,9 @@ export class ArticlesService {
             });
             if (!article) {
                 return {failed:true, msg: `invalid article id`};
+            }
+            if (article.state == false){
+                return {failed: true, msg: `incomplete article`};
             }
             for (let i = 0; i < article.explained.length; ++i) {
                 if (((article.explained[i] as Prisma.JsonObject).explain_img as any).is_local) {
@@ -697,5 +705,39 @@ export class ArticlesService {
             console.log(e);
             return {failed:true, msg: `invalid article id`};
         }
+    }
+
+    async getPendingArticle(article_id:number) {
+        try {
+            const article = await this.prismaService.article.findUnique({
+                where: {id: article_id},
+                select: {
+                    title:true,
+                    state:true,
+                    idea: true,
+                    preqs: true,
+                    next_prev_article: true,
+                    explained: true,
+                    conclusion:true
+                }
+            });
+            if (!article) {
+                return {failed:true, msg: `invalid article id`};
+            }
+            if (article.state == true){
+                return {failed: true, msg: `should only be article that has state is flase`};
+            }
+            for (let i = 0; i < article.explained.length; ++i) {
+                if (((article.explained[i] as Prisma.JsonObject).explain_img as any).is_local) {
+                    ((article.explained[i] as Prisma.JsonObject).explain_img as any).path = this.fileHandlerService.readFile(
+                        ((article.explained[i] as Prisma.JsonObject).explain_img as any).path
+                    );
+                }
+            }
+            return article;
+        } catch(e) {
+            console.log(e);
+            return {failed:true, msg: `invalid article id`};
+        } 
     }
 }

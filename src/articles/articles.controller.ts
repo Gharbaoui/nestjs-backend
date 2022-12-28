@@ -190,7 +190,7 @@ export class ArticlesController {
         return this.articlesService.getInitBasicArticle();
     }
     @UseGuards(UserGuard)
-    @Get('pendingarticles')
+    @Patch('pendingarticles')
     getPendingArticles() {
         return this.articlesService.getPendingArticles();
     }
@@ -198,5 +198,11 @@ export class ArticlesController {
     @Get('articleat')
     getArticle(@Query('article_id', ParseIntPipe) article_id:number) {
         return this.articlesService.getArticleAt(article_id);
+    }
+    
+    @UseGuards(UserGuard)
+    @Patch('articleat')
+    getPendingArticle(@Query('article_id', ParseIntPipe) article_id:number) {
+        return this.articlesService.getPendingArticle(article_id);
     }
 }
